@@ -2,11 +2,23 @@ import requests
 import json
 from requests_html import HTMLSession
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 KEYWORDS = ['programming', 'software', 'javascript', 'typescript', 'java',
             'go', 'vue', 'stock', 'financial', 'economics', 'economy', 'hacker',
             'html', 'css', 'devops', 'unix', 'linux', 'script', 'hacking', 'front end',
-            'frontend', 'backend', 'back end', 'cloud', 'cybersecurity', 'crypto', 'cryptography', 'entrepreneur']
-API_URL = 'http://localhost:5000/findBooks'
+            'frontend', 'backend', 'back end', 'cloud', 'cybersecurity', 'crypto', 'cryptography', 'entrepreneur',
+            "o'reilly", 'packt', 'apress', 'no starch press']
+API_URL = 'https://humble.asantosdev.com/findBooks'
 HUMBLE_BUNDLE_URL = 'https://www.humblebundle.com/books'
 TAG = 'humble bundle'
 PARAM = 'target'
@@ -30,10 +42,14 @@ for bundle in BUNDLE_INFO:
                 '.dd-header > h2')[0].text.split(' ', 2)[1] + ' Bundle'
             for book in item.find('.front-page-art-image-text'):
                 books.add(book.text)
-            unique_books = books - EXCLUDE_LIST
-            duplicated_books = books & EXCLUDE_LIST
-            if len(unique_books) > 0:
-                print(f'Bundle: {bundle_cost}')
-                print(f'Unique: {list(unique_books)}')
-                print(f'Duplicated: {list(duplicated_books)}')
-                print(f'URL: {book_url}')
+            unique_books = list(books - EXCLUDE_LIST)
+            duplicated_books = list(books & EXCLUDE_LIST)
+        if len(unique_books) > 0:
+            print(f"{bcolors.WARNING}Bundle:{bcolors.HEADER} {bundle['tile_name']}")
+            print(f'{bcolors.WARNING}URL:{bcolors.OKCYAN} {book_url}')
+            print(f'{bcolors.WARNING}Unique:{bcolors.ENDC}')
+            unique_books[0] = '-> '+unique_books[0]
+            print(*unique_books, sep='\n-> ')
+            duplicated_books[0] = '-> '+duplicated_books[0]
+            print(f'{bcolors.WARNING}Duplicated:{bcolors.ENDC}')
+            print(*duplicated_books, sep='\n-> ')
